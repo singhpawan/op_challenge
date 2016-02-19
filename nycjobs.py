@@ -15,6 +15,7 @@ import scipy.stats
 def last_key(item):
     return item[-1]
 
+
 # parameter: reads the nyc jobs input file
 # returns: The Department with the minimum and the maximum salary
 def get_maxMinSalary(file):
@@ -44,6 +45,11 @@ def get_maxJobCount(file):
     print "The Department with the most Job Openings is : ", maxjobcount[-1]
     return maxjobcount
 
+
+# parametes: file: csvfile, column: variable we think is the factor
+# in determining the likelihood of filling a job, field: the segmentation factor for cohort analysis
+# return: the list containing the difference in time between posting date and posting updated
+# Hypothesis: is that shorter the posing updated period the more likely the job is going to be filled.
 def find_driving_variable(file, column, field):
     csvfile = csv.DictReader(open(file))
     date_difference = [datetime.strptime(row['Posting Updated'], '%m/%d/%Y %H:%M:%S') - 
@@ -62,10 +68,13 @@ def main():
     file = sys.argv[1]
     get_maxJobCount(file)
     get_maxMinSalary(file)
+    # calculates the mean difference between for the Internal posting type
     find_driving_variable(file, 'Posting Type', 'Internal')
+    # calculates the mean difference between the External posting type
     find_driving_variable(file, 'Posting Type', 'External')
     annual_difference_list = find_driving_variable(file, 'Salary Frequency', 'Annual')
     hourly_difference_list = find_driving_variable(file, 'Salary Frequency', 'Hourly')
+    # t-test to find out statistical significance in difference based on Salary Frequency.
     tvalue, pvalue = scipy.stats.ttest_ind(annual_difference_list, hourly_difference_list, equal_var = False)
     if pvalue <=0.20:
         print " The result at least has a confidence interval of 80% and p value is : ", pvalue
