@@ -1,13 +1,14 @@
 # Contains analysis of the nycjobs and find insights
 
-
-
 import sys
 import os
 from collections import Counter
 import csv
 from datetime import datetime
 import numpy as np
+import scipy 
+import scipy.stats
+
 
 # parameter: tuple or list
 # returns: the last elementt of a list or a tuple
@@ -50,9 +51,10 @@ def find_driving_variable(file, column, field):
         for row in csvfile if row[column] == field]
     difference_list = [row.days for row in date_difference]
     mean_difference = np.mean(difference_list)
-    print "The average difference in days between the posting updated and posting created is : ", mean_difference
+    print "The average difference in days between the posting updated and posting created for" + \
+    " column ", column, "and field ", field, "is : ", mean_difference
 
-    return difference_list, mean_difference
+    return difference_list
 
 
 # Call the functions to get the respective functions
@@ -61,6 +63,12 @@ def main():
     get_maxJobCount(file)
     get_maxMinSalary(file)
     find_driving_variable(file, 'Posting Type', 'Internal')
+    find_driving_variable(file, 'Posting Type', 'External')
+    annual_difference_list = find_driving_variable(file, 'Salary Frequency', 'Annual')
+    hourly_difference_list = find_driving_variable(file, 'Salary Frequency', 'Hourly')
+    tvalue, pvalue = scipy.stats.ttest_ind(annual_difference_list, hourly_difference_list, equal_var = False)
+    if pvalue <=0.20:
+        print " The result at least has a confidence interval of 80% and p value is : ", pvalue
 
 
 # Boiler plate code to call main
