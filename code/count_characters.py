@@ -27,6 +27,9 @@ def get_character_frequency(file):
     ax = plt.axes()
     ax.set_xticks(pos + (width / 2))
     ax.set_xticklabels(labels)
+    ax.set_title('Histogram of frequency of characters in Resume')
+    ax.set_xlabel('characters')
+    ax.set_ylabel('Frequency of Characters')
     plt.bar(pos, values, width, color='r')
     plt.show()
     print count
