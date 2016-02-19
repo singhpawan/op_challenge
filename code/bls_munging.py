@@ -50,8 +50,10 @@ def scrape_page(crawl_url, url_type):
             opening.append(int(line[3]))
             if url_type == 'job':
                 industry.append(line[0])
+                print line[0], line[3]
             else:
                 industry.append(line[1])
+                print line[1], line[3]
 
     return industry, opening
 
